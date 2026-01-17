@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .section {
+            display: none;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+        }
+
+        .section.active {
+            display: flex;
+        }
+
+        /* Love Animation Section */
+        #love-animation {
+            position: relative;
+            background-image: url('bunny.gif');
+            background-repeat: repeat;
+            background-size: 80px 80px;
+        }
+
+        .intro-gif {
+            max-width: 76vw;
+            max-height: 72vh;
+            border-radius: 10px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            animation: draw-intro 5s ease both;
+            transform: scaleY(-1);
+            background-color: pink;
+        }
+
+        @keyframes draw-intro {
+            0% { opacity:0; transform: scale(.98) translateY(8px); filter: blur(2px); }
+            20% { opacity:1; transform: scale(1) translateY(0); filter: blur(0); }
+            80% { opacity:1; transform: scale(1.02) translateY(-4px); }
+            100% { opacity:1; transform: scale(1) translateY(0); }
+        }
+
+        /* Photo Gallery Section */
+        #photo-gallery {
+            background-image: url('bunny.gif');
+            background-repeat: repeat;
+            background-size: 80px 80px;
+            flex-direction: column;
+        }
+
+        .gallery-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .photo-display {
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .photo-item {
+            position: absolute;
+            width: 90%;
+            max-width: 500px;
+            height: auto;
+            max-height: 60vh;
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-item.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 20px #ff0000, 0 0 40px #ff8000, 0 0 60px #ffff00, 0 0 80px #00ff00, 0 0 100px #0080ff, 0 0 120px #8000ff;
+        }
+
+        .photo-item.hide {
+            opacity: 0;
+            transform: scale(0.8) translateY(-30px);
+        }
+
+        .photo-placeholder {
+            color: #ccc;
+        }
+
+        .photo-counter {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .photo-quote {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+            margin-top: 15px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            text-align: center;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .photo-quote.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .continue-btn {
+            margin-top: 30px;
+            padding: 12px 32px;
+            font-size: 1.3em;
+            background: white;
+            color: #764ba2;
+            border: 2px solid #764ba2;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s, opacity 0.3s;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .continue-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Birthday Message Section */
+        #birthday-message {
+            background-image: url('bunny.gif');
+            background-repeat: repeat;
+            background-size: 80px 80px;
+            flex-direction: row;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 90vw;
+            animation: slideUp 0.8s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .message-card::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 2em;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        .message-card::after {
+            content: '✨';
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            font-size: 2em;
+            animation: sparkle 1.5s ease-in-out infinite;
+            animation-delay: 0.75s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-card h1 {
+            color: #f5576c;
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .message-card p {
+            color: #555;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Video Section */
+        #video-section {
+            background-image: url('bunny.gif');
+            background-repeat: repeat;
+            background-size: 80px 80px;
+            flex-direction: column;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        /* Final Reveal Section */
+        #final-reveal {
+            background-image: url('bunny.gif');
+            background-repeat: repeat;
+            background-size: 80px 80px;
+            flex-direction: column;
+        }
+
+        .reveal-container {
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .sender-photo {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            overflow: hidden;
+        }
+
+        .sender-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sender-name {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .love-text {
+            color: #f5576c;
+            font-size: 1.8em;
+            font-style: italic;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Flower particle animation */
+        .flower-wrap {
+            position: fixed;
+            pointer-events: none;
+            transform: translate(-50%,-50%);
+            opacity: 1;
+            z-index: 2000;
+        }
+
+        .flower {
+            display: inline-block;
+            font-size: 20px;
+            will-change: transform, opacity;
+        }
+
+        .flower-wrap.intro {
+            animation: flower-drop var(--duration,10000ms) cubic-bezier(.15,.9,.22,1) var(--delay,0ms) forwards;
+        }
+
+        @keyframes flower-drop {
+            0% { opacity: 0; transform: translate(-50%,-50%) translateY(-20px) scale(.7) rotate(0deg); }
+            10% { opacity: 1; transform: translate(-50%,-50%) translateY(12px) scale(1) rotate(6deg); }
+            50% { opacity: 1; transform: translate(-50%,-50%) translateY(220px) scale(0.98) rotate(14deg); }
+            100% { opacity: 0; transform: translate(-50%,-50%) translateY(420px) scale(0.95) rotate(22deg); }
+        }
+
+        /* Balloon particle animation */
+        .balloon-wrap {
+            position: fixed;
+            pointer-events: none;
+            transform: translate(-50%,-50%);
+            opacity: 1;
+            z-index: 1500;
+        }
+
+        .balloon {
+            display: inline-block;
+            font-size: 24px;
+            will-change: transform, opacity;
+        }
+
+        .balloon-wrap.drop {
+            animation: balloon-drop var(--duration,12000ms) cubic-bezier(.15,.9,.22,1) var(--delay,0ms) forwards;
+        }
+
+        @keyframes balloon-drop {
+            0% { opacity: 0; transform: translate(-50%,-50%) translateY(-30px) scale(0.5) rotate(0deg); }
+            10% { opacity: 1; transform: translate(-50%,-50%) translateY(10px) scale(1) rotate(-5deg); }
+            70% { opacity: 1; transform: translate(-50%,-50%) translateY(300px) scale(1.05) rotate(10deg); }
+            100% { opacity: 0; transform: translate(-50%,-50%) translateY(500px) scale(0.9) rotate(15deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .birthday-images {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .left-img, .right-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+
+
+        @media (max-width: 520px) {
+            .message-card h1 { font-size: 2em; }
+            .sender-name { font-size: 1.8em; }
+            .photo-item { font-size: 3em; }
+            .intro-gif { max-width: 90vw; max-height: 60vh; }
+        }
+
+        @media (min-width: 768px) {
+            .photo-display { min-height: 500px; }
+            .message-card { padding: 50px 60px; }
+            .message-card h1 { font-size: 3.5em; }
+            .message-card p { font-size: 1.3em; }
+        }
+
+        @media (min-width: 1024px) {
+            .photo-item { max-width: 600px; max-height: 70vh; }
+            .intro-gif { max-width: 60vw; max-height: 80vh; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Section 1: Love Animation -->
+    <div id="love-animation" class="section active">
+        <img src="draw.gif" class="intro-gif" alt="Love animation" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div style="display:none; font-size:5em;">💖</div>
+    </div>
+
+    <!-- Section 2: Photo Gallery -->
+    <div id="photo-gallery" class="section">
+        <div class="gallery-container">
+            <div class="photo-display">
+                <div class="photo-item" data-index="0"><img src="yong1.jpeg" alt="Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="1"><img src="yong2.jpeg" alt="Photo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="2"><img src="yong3.jpeg" alt="Photo 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="3"><img src="yong4.jpeg" alt="Photo 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="4"><img src="yong5.jpeg" alt="Photo 5" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="5"><img src="yong6.jpeg" alt="Photo 6" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="6"><img src="yong7.jpeg" alt="Photo 7" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="7"><img src="yong8.jpeg" alt="Photo 8" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="8"><img src="yong9.jpeg" alt="Photo 9" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+                <div class="photo-item" data-index="9"><img src="yong10.jpeg" alt="Photo 10" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="photo-placeholder" style="display:none;">📷</span></div>
+            </div>
+            <div class="photo-counter">
+                <span id="currentPhoto">1</span> / <span id="totalPhotos">10</span>
+            </div>
+            <div class="photo-quote" id="photo-quote"></div>
+            <button class="continue-btn" onclick="showMessage()">Open Your Gift 🎁</button>
+        </div>
+    </div>
+
+    <!-- Section 3: Birthday Message -->
+    <div id="birthday-message" class="section">
+        <div class="message-card">
+            <div class="birthday-images">
+                <img src="adlin.jpeg" alt="Adlin" class="left-img">
+                <img src="bobbyy.jpeg" alt="Bobby" class="right-img">
+            </div>
+            <p>
+                HYE SAYANGGGGKU ADLIN FADLINAAA YANGG CANTIKKK🤍🤍🤍🩵🤍🩵🩵🩵😍😍SAYANGGG HAPPYY BIRTHDAYY TOOO YOUU SAYANGGGG🥳🥳 sayanggg i just wanna say saya really proudd ada by ur sidee sayanggg,saya takk sangkaa sayangg orangg yangg temann saya daripada bulan 4 untill now is orang yangg sama sayanggg andd saya hope forever sayanggg🥺🩵🤍sayanggg saya nakk awakk ingatt saya akan alwayss ada dengann awakk sayangg,saya akan teman every stepp dengan awakk sayangg🥺🤍i'm reallyy prouddd of havingg u sayanggg by my sidee sayanggg🥺🤍iloveuuusooomuchhh adlin fadhlinaaaa🩷🤍🩵🤍🩵🤍🩵🤍🩷🤍🤍🤍🩵🤍❤️❤️🤍🤍🩷🤍🩷🤍🤍🩵🤍🩷🩷🩷🤍🩷🤍🩵🩵🤍🤍
+            </p>
+            <button class="continue-btn show" onclick="showVideo()">Watch Special Video 🎥</button>
+        </div>
+    </div>
+
+    <!-- Section 4: Video Section -->
+    <div id="video-section" class="section">
+        <div class="video-container">
+            <button id="play-video-btn" class="continue-btn show" onclick="playVideoAndShow()">Play Video 🎥</button>
+            <video id="birthday-video" onended="showButtonAfterVideo()" style="display: none; max-width: 90vw; max-height: 80vh; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <source src="bestvideo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <button id="after-video-btn" class="continue-btn" onclick="showFinalReveal()" style="display: none;">Continue to Love Message 💕</button>
+        </div>
+    </div>
+
+    <!-- Section 5: Final Reveal -->
+    <div id="final-reveal" class="section">
+        <div class="reveal-container">
+            <div class="sender-photo">
+                <img src="yongcomel2.jpg" alt="Sender" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display:none;">👤</span>
+            </div>
+            <h2 class="sender-name">With Love From, Fhaqifh Akhilie</h2>
+            <p class="love-text">💕sayangggg this dayy not just ur birthdayy but this day is the day that really mean to me sayangg🥺🤍cause u are the person that have changed mee in a good way without u realize it sayangg🥺🤍sayangggg saya tahuu latelyy ni banyakk sangatt sayanggg kenaa face banyakk benda jadi dekat sayangg butt saya nakk hari esokk sayangggg the most happiesttt dayyyy of urr lyfee sayangggg🥺🤍🩵💙🤍🤍🤍sayanggg sayaa alwayss proud dengann awakk sayangg no words can describe how much i loveuuuu sayanggg🥺🩵🤍🤍🤍
+sayanggg thankyouuu for choosingg mee,for ur oatuencee and for lovinggg me the way you do sayanggg🤍having u in my life is somethinggg i'll always be thankful for.I promise to take care of u,support u and love u with all my heartt sayanggg🩷🤍🤍💙🩵🤍🩵💙🤍🩷🤍💙🩵🩵💙🩵🤍🤍🤍
+iloveuusoomuchhh adlin fadhlinaaa😍🩵 💕</p>
+        </div>
+    </div>
+
+    <script>
+        let currentPhotoIndex = 0;
+        const totalPhotos = 10;
+        const photoItems = document.querySelectorAll('.photo-item');
+        const continueBtn = document.querySelector('#photo-gallery .continue-btn');
+        const currentPhotoSpan = document.getElementById('currentPhoto');
+        const photoQuoteElement = document.getElementById('photo-quote');
+
+        // Background music
+        const bgMusic = new Audio('yonglove.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+
+        // Start music on first user interaction
+        let musicStarted = false;
+        function startMusic() {
+            if (!musicStarted) {
+                bgMusic.play().catch(e => console.log('Music autoplay blocked'));
+                musicStarted = true;
+            }
+        }
+
+        // Add click listener to start music
+        document.addEventListener('click', startMusic, { once: true });
+
+        // Love and birthday quotes for each photo
+        const photoQuotes = [
+            "💕 Every moment with you is a treasure I hold close to my heart",
+            "🎂 You make every day feel like a celebration of love",
+            "✨ Your smile lights up my world brighter than any star",
+            "💖 Being with you feels like coming home",
+            "🌟 You're not just my love, you're my best friend",
+            "💝 My heart chose you, and it was the best decision ever",
+            "🎉 Happy Birthday to the one who makes my heart skip a beat",
+            "🌹 You're the reason I believe in forever",
+            "💗 Loving you is the easiest and most beautiful thing I've ever done",
+            "🎈 Another year of loving you, and I fall deeper every day"
+        ];
+
+        // Audio chime function
+        let audioCtx;
+        function playChime() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioCtx.currentTime;
+                // quick two-tone chime
+                const o1 = audioCtx.createOscillator();
+                const o2 = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o1.type = 'sine'; o2.type = 'triangle';
+                o1.frequency.setValueAtTime(880, now);
+                o2.frequency.setValueAtTime(660, now);
+                g.gain.setValueAtTime(0.0001, now);
+                g.gain.linearRampToValueAtTime(0.12, now + 0.01);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+                o1.start(now); o2.start(now);
+                o1.frequency.exponentialRampToValueAtTime(1320, now + 0.12);
+                o2.frequency.exponentialRampToValueAtTime(990, now + 0.18);
+                o1.stop(now + 0.6); o2.stop(now + 0.6);
+            } catch (e) { /* audio not supported or blocked; fail silently */ }
+        }
+
+        // Intro flowers function
+        function spawnIntroFlowers(totalDuration = 10000, totalCount = 40) {
+            const centerX = window.innerWidth / 2;
+            const emojis = ['🌸','🌺','🌼','💮'];
+            for (let i = 0; i < totalCount; i++) {
+                const schedule = Math.random() * totalDuration;
+                setTimeout(() => {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'flower-wrap';
+                    const fl = document.createElement('span');
+                    fl.className = 'flower';
+                    fl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+                    const dx = Math.round((Math.random() - 0.5) * 120);
+                    const dur = 9000 + Math.round(Math.random() * 2600);
+                    const rot = Math.round((Math.random() - 0.5) * 180);
+                    const scale = (0.8 + Math.random() * 0.9).toFixed(2);
+
+                    wrap.style.left = (centerX + dx) + 'px';
+                    wrap.style.top = (-20 + Math.round(Math.random()*20)) + 'px';
+                    wrap.style.setProperty('--delay', '0ms');
+                    wrap.style.setProperty('--duration', `${dur}ms`);
+                    fl.style.transform = `rotate(${rot}deg) scale(${scale})`;
+
+                    wrap.appendChild(fl);
+                    document.body.appendChild(wrap);
+
+                    requestAnimationFrame(() => wrap.classList.add('intro'));
+
+                    wrap.addEventListener('animationend', () => wrap.remove(), { once: true });
+                }, schedule);
+            }
+            setTimeout(() => {
+                document.querySelectorAll('.flower-wrap').forEach(el => el.remove());
+            }, totalDuration + 12000);
+        }
+
+        // Balloon drop function
+        function spawnBalloons(totalDuration = 25000, totalCount = 30) {
+            const centerX = window.innerWidth / 2;
+            const emojis = ['🎈', '🎂', '🎉', '🎁', '✨', '🌟'];
+            for (let i = 0; i < totalCount; i++) {
+                const schedule = Math.random() * totalDuration;
+                setTimeout(() => {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'balloon-wrap';
+                    const bl = document.createElement('span');
+                    bl.className = 'balloon';
+                    bl.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+                    const dx = Math.round((Math.random() - 0.5) * 200);
+                    const dur = 12000 + Math.round(Math.random() * 4000);
+                    const rot = Math.round((Math.random() - 0.5) * 20);
+                    const scale = (0.7 + Math.random() * 0.6).toFixed(2);
+
+                    wrap.style.left = (centerX + dx) + 'px';
+                    wrap.style.top = (-30 + Math.round(Math.random()*10)) + 'px';
+                    wrap.style.setProperty('--delay', '0ms');
+                    wrap.style.setProperty('--duration', `${dur}ms`);
+                    bl.style.transform = `rotate(${rot}deg) scale(${scale})`;
+
+                    wrap.appendChild(bl);
+                    document.body.appendChild(wrap);
+
+                    requestAnimationFrame(() => wrap.classList.add('drop'));
+
+                    wrap.addEventListener('animationend', () => wrap.remove(), { once: true });
+                }, schedule);
+            }
+            setTimeout(() => {
+                document.querySelectorAll('.balloon-wrap').forEach(el => el.remove());
+            }, totalDuration + 15000);
+        }
+
+        // Show next photo with animation
+        function showNextPhoto() {
+            if (currentPhotoIndex < totalPhotos) {
+                // Hide previous photo and quote if exists
+                if (currentPhotoIndex > 0) {
+                    photoItems[currentPhotoIndex - 1].classList.remove('show');
+                    photoItems[currentPhotoIndex - 1].classList.add('hide');
+                    photoQuoteElement.classList.remove('show');
+                }
+
+                // Show current photo
+                photoItems[currentPhotoIndex].classList.add('show');
+                playChime();
+                photoItems[currentPhotoIndex].classList.remove('hide');
+                
+                // Update counter
+                currentPhotoSpan.textContent = currentPhotoIndex + 1;
+
+                // Show quote for current photo
+                setTimeout(() => {
+                    photoQuoteElement.textContent = photoQuotes[currentPhotoIndex];
+                    photoQuoteElement.classList.add('show');
+                }, 300);
+
+                currentPhotoIndex++;
+
+                // If not the last photo, schedule next photo
+                if (currentPhotoIndex < totalPhotos) {
+                    setTimeout(showNextPhoto, 2000);
+                } else {
+                    // All photos shown, show continue button after a delay
+                    setTimeout(() => {
+                        continueBtn.classList.add('show');
+                    }, 1000);
+                }
+            }
+        }
+
+        // Auto-advance from love animation after 5 seconds
+        setTimeout(() => {
+            document.getElementById('love-animation').classList.remove('active');
+            document.getElementById('photo-gallery').classList.add('active');
+            
+            // Start showing photos one by one
+            setTimeout(() => {
+                showNextPhoto();
+            }, 500);
+
+            // Spawn intro flowers
+            spawnIntroFlowers(20000, 48);
+        }, 5000);
+
+        function showMessage() {
+            document.getElementById('photo-gallery').classList.remove('active');
+            document.getElementById('birthday-message').classList.add('active');
+        }
+
+        function showVideo() {
+            document.getElementById('birthday-message').classList.remove('active');
+            document.getElementById('video-section').classList.add('active');
+            // Pause background music when entering video section
+            bgMusic.pause();
+        }
+
+        function playVideoAndShow() {
+            document.getElementById('play-video-btn').style.display = 'none';
+            const video = document.getElementById('birthday-video');
+            video.style.display = 'block';
+            video.play();
+        }
+
+        function showButtonAfterVideo() {
+            document.getElementById('birthday-video').style.display = 'none';
+            const afterBtn = document.getElementById('after-video-btn');
+            afterBtn.style.display = 'block';
+            afterBtn.classList.add('show');
+        }
+
+        function showFinalReveal() {
+            document.getElementById('video-section').classList.remove('active');
+            document.getElementById('final-reveal').classList.add('active');
+            // Resume background music when leaving video section
+            bgMusic.play().catch(e => console.log('Music play failed'));
+        }
+    </script>
+</body>
+</html>

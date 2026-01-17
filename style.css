@@ -1,0 +1,96 @@
+/* Pink-ish background, centered button + GIF */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffd1dc 0%, #ff9ab6 45%, #ffb3d9 100%);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  overflow: hidden;
+}
+body.media-active {
+  background: linear-gradient(135deg, #ff69b4 0%, #ff1493 50%, #ffb3d9 100%);
+}
+.hug-wrap { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:2rem; transition: opacity .4s ease, transform .24s ease; min-height: 100vh; }
+
+/* Center controls fixed in the viewport so buttons stay centered always */
+.center-controls { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 1200; display:flex; align-items:center; justify-content:center; }
+.center-controls.media-visible { top: 20%; transform: translate(-50%, 0); }
+.center-controls .controls{ display:flex; gap:0.6rem; align-items:center; }
+
+/* Media stage sits centered horizontally and positioned just below the centered controls */
+.media-stage { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:1rem; z-index: 1100; pointer-events: none; max-width: 92vw; padding: 0 1rem; }
+/* allow interaction with media elements inside the stage */
+.media-stage > * { pointer-events: auto; }
+
+/* Hide controls during intro */
+.intro-active .center-controls{ opacity: 0; pointer-events: none; }
+.controls { display:flex; gap:0.6rem; align-items:center; }
+.hug-btn {
+  background: #ff4d88;
+  color: white;
+  border: none;
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255,77,136,0.18);
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+.hug-btn.secondary { background: #fff; color: #ff3f7a; box-shadow: 0 8px 20px rgba(255,77,136,0.06); border: 1px solid rgba(255,63,122,0.12); }
+.hug-btn:active { transform: translateY(1px) scale(.997); }
+.hug-btn:focus { outline: 3px solid rgba(255,77,136,0.18); }
+.hug-img { display:block; margin: 0 auto; max-width: 92vw; max-height: calc(100vh - 160px); border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.18); transition: opacity .36s ease, transform .36s ease; pointer-events: auto; }
+.visible .hug-img { box-shadow: 0 12px 30px rgba(0,0,0,0.18), 0 0 40px rgba(255,77,136,0.5); }
+.love { display:flex; flex-direction:column; align-items:center; gap:0.6rem; }
+/* Caption: start slightly down and transparent, then slide up and fade in when shown */
+.caption {
+  margin-top:0.4rem;
+  background: rgba(255,255,255,0.95);
+  padding:0.4rem 0.7rem;
+  border-radius:8px;
+  color:#5a1b2a;
+  font-weight:600;
+  opacity: 0;
+  transform: translateY(8px) scale(.995);
+  transition: opacity .32s cubic-bezier(.2,.9,.2,1) .04s, transform .32s cubic-bezier(.2,.9,.2,1) .04s;
+  text-align: center;
+}
+/* When the parent .love becomes visible, animate the caption into place */
+.love.visible .caption { opacity: 1; transform: translateY(0) scale(1); }
+
+/* Keep existing show/hide helpers for images/figures */
+.hidden { opacity: 0; transform: scale(.98); pointer-events: none; height: 0; }
+.visible { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+@media (max-width:520px){ .hug-btn{ padding:0.8rem 1rem; } .hug-img{ max-height: calc(100vh - 120px); } }
+
+/* Intro overlay (draw.gif) - shows on page load for ~5s */
+.intro-overlay { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index: 2200; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02)); pointer-events: auto; }
+.intro-overlay .draw { max-width: 76vw; max-height: 72vh; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,0.25); animation: draw-intro 5s ease both; }
+.intro-overlay.fade { opacity: 0; transition: opacity .6s ease; pointer-events: none; }
+
+/* While intro is active, hide the main UI until overlay completes */
+.intro-active .hug-wrap { opacity: 0; pointer-events: none; user-select: none; transform: translateY(4px); }
+
+@keyframes draw-intro { 0% { opacity:0; transform: scale(.98) translateY(8px); filter: blur(2px); } 20% { opacity:1; transform: scale(1) translateY(0); filter: blur(0); } 80% { opacity:1; transform: scale(1.02) translateY(-4px);} 100% { opacity:0; transform: scale(1.04) translateY(-10px);} }
+
+/* Flower particle animation */
+.flower-wrap { position: fixed; pointer-events: none; transform: translate(-50%,-50%); opacity: 1; }
+.flower { display:inline-block; font-size: 20px; will-change: transform, opacity; }
+/* rising flowers from button */
+.flower-wrap.float { animation: flower-rise 1000ms cubic-bezier(.2,.9,.2,1) var(--delay,0ms) forwards; }
+@keyframes flower-rise{ 0%{ opacity:1; transform: translate(-50%,-50%) translateY(0) } 100%{ opacity:0; transform: translate(-50%,-50%) translateY(-180px) rotate(20deg) } }
+
+/* intro burst: flowers pop from top center and fall/fade */
+.flower-wrap.intro { animation: flower-drop var(--duration,10000ms) cubic-bezier(.15,.9,.22,1) var(--delay,0ms) forwards; }
+@keyframes flower-drop { 
+  0% { opacity: 0; transform: translate(-50%,-50%) translateY(-20px) scale(.7) rotate(0deg); }
+  10% { opacity: 1; transform: translate(-50%,-50%) translateY(12px) scale(1) rotate(6deg); }
+  50% { opacity: 1; transform: translate(-50%,-50%) translateY(220px) scale(0.98) rotate(14deg); }
+  100% { opacity: 0; transform: translate(-50%,-50%) translateY(420px) scale(0.95) rotate(22deg); }
+}
+
+
